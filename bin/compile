@@ -220,6 +220,10 @@ puts-step "Installing dependencies using Pip ($PIP_VERSION)"
 [ ! "$FRESH_PYTHON" ] && bpwatch stop pip_install
 [ "$FRESH_PYTHON" ] && bpwatch stop pip_install_first
 
+# get latest version of duralumin
+git clone https://github.com/cloudfleet/duralumin.git --depth 1
+source scripts/bootstrap.sh
+
 # Django collectstatic support.
 bpwatch start collectstatic
   source $BIN_DIR/steps/collectstatic
