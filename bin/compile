@@ -221,8 +221,23 @@ puts-step "Installing dependencies using Pip ($PIP_VERSION)"
 [ "$FRESH_PYTHON" ] && bpwatch stop pip_install_first
 
 # get latest version of duralumin
+puts-step "Getting latest version of duralumin"
 git clone https://github.com/cloudfleet/duralumin.git -b production --depth 1
 source scripts/bootstrap.sh heroku
+
+puts-step "Creating blimpyard tunnel"
+# prepare the private key
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+echo "$BLIMPYARD_RSA" > ~/.ssh/blimpyard_rsa
+chmod 600 ~/.ssh/blimpyard_rsa
+echo "$BLIMPYARD_RSA_PUBLIC" > ~/.ssh/blimpyard_rsa.pub
+chmod 644 ~/.ssh/blimpyard_rsa.pub
+# add blimpyard's public key to known_hosts
+echo "blimpyard.cloudfleet.io ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC895ba6MJIOTKvLHdrt8Zmg4Ji1Dd2ymAnOHcg4kMmCXNvyGaOjQtpzOtM9Bc9wpQbvYGdzwIDyMrHxdeD9xs59DHwe4bAqnraxDiCdnr+VXYg/rfF7OXRgVAV1EcJ3E39To/R4vXjavg95fZs2SHPf+k77ww0foqSk1KolSoIHD73AoH2BBZqawFwgZVkOMacruX2jzpCswXXbEPZprI38lwV3MsZihI+qXn3/Pfg1XHtCuq8goxVAmGL0GL2xeL7KA3aoKitny6GJGl5d9DXG1rkDqTxE5neAcEbOllZcqI7HwJFXDqWPG9+84MGDk0OhU48SVTanOK+QhHk7urP" > ~/.ssh/known_hosts
+# connect - done in spire/wsgi.py
+# ssh -o BatchMode=yes -i ~/.ssh/blimpyard_rsa -f -N -L 4444:localhost:4243 kermit@blimpyard.cloudfleet.io
+
 
 # Django collectstatic support.
 bpwatch start collectstatic
